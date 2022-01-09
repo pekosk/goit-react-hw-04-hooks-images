@@ -1,0 +1,12 @@
+img {
+  display: block;
+  width: 100%;
+}
+
+body {
+  text-align: center;
+}
+
+.modalImage {
+  width: 860px;
+}
