@@ -25,75 +25,69 @@ function App() {
 
   const [state, setState] = useState(initialState);
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   const { query, items } = this.state;
-  //   if (prevState.query !== query && query) {
-  //     this.setState({ loading: true, items: [] });
-  //     this.fetchQuery();
-  //   }
-  //   if (items.length > 12) {
-  //     window.scrollTo({
-  //       top: document.documentElement.scrollHeight,
-  //       behavior: 'smooth',
-  //     })
-  //   }
-  // }
-
-  async fetchQuery() {
-    const { page, query } = this.state;
-    try {
-      const { data } = await ApiService.searchQuery(page, query);
-      if (!data.hits.length) {
-        return alert('Sorry, there are no images matching your search query. Please try again.');
-      }
-      this.setState(({ items, page }) => {
-        return {
-          items: [...items, ...data.hits],
+  useEffect(() => {
+    const fetchQuery = async () => {
+      const { page, query } = state;
+      try {
+        const { data } = await ApiService.searchQuery(page, query);
+        setState(({ items }) => {
+          return {
+            ...state,
+            items: [...items, ...data.hits],
+            loading: false,
+            error: null,
+          };
+        });
+      } catch (error) {
+        setState({
           loading: false,
-          error: null,
-          page: page + 1,
-        };
-      });
-    } catch (error) {
-      this.setState({
-        loading: false,
-        error,
-      });
+          error,
+        });
+      }
+    };
+    if (state.query) {
+      fetchQuery();
     }
-  }
+  }, [state.query, state.page]);
 
-  searchQuery = ({ query }) => {
-    this.setState({ query, page: 1, });
-  };
+  const searchQuery = useCallback(({ query }) => {
+    const newState = { ...state, query, page: 1 };
+    if (query !== state.query) {
+      newState.loading = true;
+      setState(newState);
+    }
+  }, []);
 
-  openModal = (id) => {
-    this.setState((prevState) => {
+  const openModal = useCallback((id) => {
+    setState((prevState) => {
       const { items } = prevState;
-      const { largeImageURL } = items.find((item) => item.id === id);
+      const { largeImageURL } = items.find(item => item.id === id);
       return {
+        ...state,
         modalOpen: true,
         largeImageURL,
-      };
+      }
+    })
+  }, [state.items]);
+
+  const closeModal = () => {
+    setState({
+      ...state,
+      modalOpen: false,
     });
   };
 
-  closeModal = (e) => {
-    this.setState({ modalOpen: false });
+  const loadMore = () => {
+    setState({ ...state, page: state.page + 1 });
   };
 
-  loadMore = (e) => {
-    this.fetchQuery();
-  };
-
-  const { items, loading, error, query, modalOpen, largeImageURL } = this.state;
-  const { searchQuery, closeModal, openModal, loadMore } = this;
-  const showBtn = items.length >= 12 && !loading;
+  const showBtn = state.items.length >= 12 && !state.loading;
   return (
     <>
       <Searchbar onSubmit={searchQuery} />
-      {!error && <ImageGallery onClick={openModal} items={items} />}
+      {!state.error && <ImageGallery onClick={openModal} items={state.items} />}
       {showBtn && <Button onLoadMore={loadMore} title="Load More" />}
-      {loading && <div className={styles.loader}>
+      {state.loading && <div className={styles.loader}>
         <Loader
           type="Puff"
           color="#00BFFF"
@@ -102,9 +96,9 @@ function App() {
           timeout={3000} //3 secs
         />
       </div>}
-      {modalOpen && (
+      {state.modalOpen && (
         <Modal closeModal={closeModal}>
-          <img className={styles.modalImage} src={largeImageURL} alt={query} />
+          <img className={styles.modalImage} src={state.largeImageURL} alt={state.query} />
         </Modal>
       )}
     </>

@@ -1,5 +1,6 @@
 import styles from "./ImageGallery.module.css";
 import PropTypes from "prop-types";
+import {memo} from "react";
 
 import ImageGalleryItem from "./ImageGalleryItem";
 
@@ -25,4 +26,4 @@ ImageGallery.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-export default ImageGallery;
+export default memo(ImageGallery);
