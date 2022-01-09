@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ApiService } from './api/api';
 
 import styles from './App.module.css';
@@ -11,8 +11,8 @@ import ImageGallery from './components/ImageGallery';
 
 
 
-class App extends Component {
-  state = {
+function App() {
+  const initialState = {
     id: "",
     largeImageURL: "",
     items: [],
@@ -23,19 +23,21 @@ class App extends Component {
     modalOpen: false,
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    const { query, items } = this.state;
-    if (prevState.query !== query && query) {
-      this.setState({ loading: true, items: [] });
-      this.fetchQuery();
-    }
-    if (items.length > 12) {
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: 'smooth',
-      })
-    }
-  }
+  const [state, setState] = useState(initialState);
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   const { query, items } = this.state;
+  //   if (prevState.query !== query && query) {
+  //     this.setState({ loading: true, items: [] });
+  //     this.fetchQuery();
+  //   }
+  //   if (items.length > 12) {
+  //     window.scrollTo({
+  //       top: document.documentElement.scrollHeight,
+  //       behavior: 'smooth',
+  //     })
+  //   }
+  // }
 
   async fetchQuery() {
     const { page, query } = this.state;
@@ -83,32 +85,30 @@ class App extends Component {
     this.fetchQuery();
   };
 
-  render() {
-    const { items, loading, error, query, modalOpen, largeImageURL } = this.state;
-    const { searchQuery, closeModal, openModal, loadMore } = this;
-    const showBtn = items.length >= 12 && !loading;
-    return (
-      <>
-        <Searchbar onSubmit={searchQuery} />
-        {!error && <ImageGallery onClick={openModal} items={items} />}
-        {showBtn && <Button onLoadMore={loadMore} title="Load More" />}
-        {loading && <div className={styles.loader}>
-          <Loader
-            type="Puff"
-            color="#00BFFF"
-            height={100}
-            width={100}
-            timeout={3000} //3 secs
-          />
-        </div>}
-        {modalOpen && (
-          <Modal closeModal={closeModal}>
-            <img className={styles.modalImage} src={largeImageURL} alt={query} />
-          </Modal>
-        )}
-      </>
-    );
-  }
+  const { items, loading, error, query, modalOpen, largeImageURL } = this.state;
+  const { searchQuery, closeModal, openModal, loadMore } = this;
+  const showBtn = items.length >= 12 && !loading;
+  return (
+    <>
+      <Searchbar onSubmit={searchQuery} />
+      {!error && <ImageGallery onClick={openModal} items={items} />}
+      {showBtn && <Button onLoadMore={loadMore} title="Load More" />}
+      {loading && <div className={styles.loader}>
+        <Loader
+          type="Puff"
+          color="#00BFFF"
+          height={100}
+          width={100}
+          timeout={3000} //3 secs
+        />
+      </div>}
+      {modalOpen && (
+        <Modal closeModal={closeModal}>
+          <img className={styles.modalImage} src={largeImageURL} alt={query} />
+        </Modal>
+      )}
+    </>
+  );
 }
 
 export default App;
