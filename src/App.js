@@ -12,49 +12,48 @@ import ImageGallery from './components/ImageGallery';
 
 
 function App() {
-  const initialState = {
-    id: "",
-    largeImageURL: "",
-    items: [],
-    loading: false,
-    error: null,
-    page: 1,
-    query: "",
-    modalOpen: false,
-  };
+  // const initialState = {
+  //   largeImageURL: "",
+  //   items: [],
+  //   loading: false,
+  //   error: null,
+  //   page: 1,
+  //   query: "",
+  //   modalOpen: false,
+  // };
 
-  const [state, setState] = useState(initialState);
+  const [largeImageUrl, setLargeImage] = useState('');
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState('');
+  const [modalOpen, setModal] = useState(false);
 
   useEffect(() => {
     const fetchQuery = async () => {
-      const { page, query } = state;
       try {
         const { data } = await ApiService.searchQuery(page, query);
-        setState(({ items }) => {
           return {
-            ...state,
-            items: [...items, ...data.hits],
-            loading: false,
-            error: null,
+            setItems(data);
+            setLoading(false);
+            setError(null);
           };
-        });
       } catch (error) {
-        setState({
-          loading: false,
-          error,
-        });
+        setLoading(false);
+        setError(true);
       }
     };
+
     if (state.query) {
       fetchQuery();
     }
-  }, [state.query, state.page]);
+  }, [query, page]);
 
   const searchQuery = useCallback(({ query }) => {
     const newState = { ...state, query, page: 1 };
     if (query !== state.query) {
-      newState.loading = true;
-      setState(newState);
+      setLoading(true);
     }
   }, []);
 
