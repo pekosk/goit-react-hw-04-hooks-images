@@ -3,16 +3,16 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 
 function Searchbar({ onSubmit }) {
-  const [value, setValue] = useState("");
+  const [query, setQuery] = useState("");
 
   const handleChange = (e) => {
-    setValue(e.target.value);
+    setQuery(e.target.value);
   };
 
   const submitQuery = (e) => {
     e.preventDefault();
-    onSubmit(value);
-    setValue('');
+    onSubmit(query);
+    setQuery('');
   };
 
     return (
@@ -29,7 +29,7 @@ function Searchbar({ onSubmit }) {
               autoComplete="off"
               autoFocus
               placeholder="Search images and photos"
-              value={value}
+              value={query}
               onChange={handleChange}
               name="query"
             />
