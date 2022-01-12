@@ -1,32 +1,32 @@
 import styles from "./Modal.module.css";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 
-class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener("keydown", this.close);
-  }
+function Modal({ closeModal, children}) {
+  useEffect(
+    () => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []
+  );
 
-  close = (e) => {
+  const close = (e) => {
     if (e.code === "Escape") {
-      return this.props.closeModal();
+      closeModal();
     }
   };
 
-  onCloseModal = (e) => {
-    const { currentTarget, target } = e;
-    if (currentTarget === target) {
-      this.props.closeModal();
+  const onCloseModal = (e) => {
+    if (e.currentTarget === e.target) {
+      closeModal();
     }
   };
 
-  render() {
     return (
-      <div className={styles.overlay} onClick={this.onCloseModal}>
-        {this.props.children}
+      <div className={styles.overlay} onClick={onCloseModal}>
+        {children}
       </div>
     );
-  }
 }
 
 export default Modal;

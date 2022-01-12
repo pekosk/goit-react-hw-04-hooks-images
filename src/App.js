@@ -34,25 +34,25 @@ function App() {
     const fetchQuery = async () => {
       try {
         const { data } = await ApiService.searchQuery(page, query);
-          return {
-            setItems(data);
-            setLoading(false);
-            setError(null);
-          };
+        return {
+          //         setItems(prevImages => [...prevImages, ...data.hits]);
+          // setLoading(false);
+          // setError(null);
+        };
       } catch (error) {
         setLoading(false);
         setError(true);
       }
     };
 
-    if (state.query) {
+    if (query) {
       fetchQuery();
     }
   }, [query, page]);
 
   const searchQuery = useCallback(({ query }) => {
-    const newState = { ...state, query, page: 1 };
-    if (query !== state.query) {
+    const newState = { query, page: 1 };
+    if (query !== query) {
       setLoading(true);
     }
   }, []);
@@ -67,26 +67,23 @@ function App() {
         largeImageURL,
       }
     })
-  }, [state.items]);
+  }, [items]);
 
   const closeModal = () => {
-    setState({
-      ...state,
-      modalOpen: false,
-    });
+    setModal(false);
   };
 
   const loadMore = () => {
-    setState({ ...state, page: state.page + 1 });
+    setPage((prevPage) => prevPage + 1);
   };
 
-  const showBtn = state.items.length >= 12 && !state.loading;
+  const showBtn = items.length >= 12 && !loading;
   return (
     <>
       <Searchbar onSubmit={searchQuery} />
-      {!state.error && <ImageGallery onClick={openModal} items={state.items} />}
+      {!error && <ImageGallery onClick={openModal} items={items} />}
       {showBtn && <Button onLoadMore={loadMore} title="Load More" />}
-      {state.loading && <div className={styles.loader}>
+      {loading && <div className={styles.loader}>
         <Loader
           type="Puff"
           color="#00BFFF"
@@ -95,9 +92,9 @@ function App() {
           timeout={3000} //3 secs
         />
       </div>}
-      {state.modalOpen && (
+      {modalOpen && (
         <Modal closeModal={closeModal}>
-          <img className={styles.modalImage} src={state.largeImageURL} alt={state.query} />
+          <img className={modalImage} src={largeImageURL} alt={query} />
         </Modal>
       )}
     </>
