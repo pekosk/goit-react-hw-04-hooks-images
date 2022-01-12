@@ -22,7 +22,7 @@ function App() {
   //   modalOpen: false,
   // };
 
-  const [largeImageUrl, setLargeImage] = useState('');
+  const [largeImageURL, setLargeImage] = useState('');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -32,16 +32,25 @@ function App() {
 
   useEffect(() => {
     const fetchQuery = async () => {
+      setLoading(true);
       try {
-        const { data } = await ApiService.searchQuery(page, query);
-        return {
-          //         setItems(prevImages => [...prevImages, ...data.hits]);
-          // setLoading(false);
-          // setError(null);
-        };
+        const data = await ApiService.searchQuery(page, query);
+        if (data?.hits.length > 11) {
+          setItems(prevImages => [...prevImages, ...data.hits]);
+          setLoading(false);
+        }
+        if (!data.hits.length) {
+          return alert('Sorry, there are no images matching your search query. Please try again.');
+        }
       } catch (error) {
         setLoading(false);
         setError(true);
+      } finally {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: "smooth",
+        });
+        setLoading(false);
       }
     };
 
@@ -50,30 +59,23 @@ function App() {
     }
   }, [query, page]);
 
-  const searchQuery = useCallback(({ query }) => {
-    const newState = { query, page: 1 };
-    if (query !== query) {
-      setLoading(true);
-    }
-  }, []);
+  const searchQuery = (item) => {
+    setQuery(item);
+    setItems([]);
+    setPage(1);
+  }
 
-  const openModal = useCallback((id) => {
-    setState((prevState) => {
-      const { items } = prevState;
-      const { largeImageURL } = items.find(item => item.id === id);
-      return {
-        ...state,
-        modalOpen: true,
-        largeImageURL,
-      }
-    })
-  }, [items]);
+  const openModal = (url) => {
+    setLargeImage(url)
+    setModal(true);
+  }
 
   const closeModal = () => {
     setModal(false);
   };
 
   const loadMore = () => {
+    setLoading(true);
     setPage((prevPage) => prevPage + 1);
   };
 
@@ -94,7 +96,7 @@ function App() {
       </div>}
       {modalOpen && (
         <Modal closeModal={closeModal}>
-          <img className={modalImage} src={largeImageURL} alt={query} />
+          <img className={styles.modalImage} src={largeImageURL} alt={query} />
         </Modal>
       )}
     </>
