@@ -5,8 +5,8 @@ import React, { useEffect } from "react";
 function Modal({ closeModal, children}) {
   useEffect(
     () => {
-    window.addEventListener("keydown", onCloseModal);
-    return () => window.removeEventListener("keydown", onCloseModal);
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
   }, []
   );
 

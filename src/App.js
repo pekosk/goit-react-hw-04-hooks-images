@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { ApiService } from './api/api';
 
 import styles from './App.module.css';
@@ -12,16 +12,6 @@ import ImageGallery from './components/ImageGallery';
 
 
 function App() {
-  // const initialState = {
-  //   largeImageURL: "",
-  //   items: [],
-  //   loading: false,
-  //   error: null,
-  //   page: 1,
-  //   query: "",
-  //   modalOpen: false,
-  // };
-
   const [largeImageURL, setLargeImage] = useState('');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
