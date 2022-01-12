@@ -25,8 +25,9 @@ function App() {
       setLoading(true);
       try {
         const data = await ApiService.searchQuery(page, query);
+        console.log("object", data);
         if (data?.hits.length > 11) {
-          setItems(prevImages => [...prevImages, ...data.hits]);
+          setItems(prevItem => [...prevItem, ...data.hits])
           setLoading(false);
         }
         if (!data.hits.length) {
@@ -43,20 +44,18 @@ function App() {
         setLoading(false);
       }
     };
-
-    if (query) {
-      fetchQuery();
-    }
+    fetchQuery();
   }, [query, page]);
 
   const searchQuery = (item) => {
     setQuery(item);
     setItems([]);
     setPage(1);
+    console.log(item);
   }
 
   const openModal = (url) => {
-    setLargeImage(url)
+    setLargeImage(url);
     setModal(true);
   }
 
