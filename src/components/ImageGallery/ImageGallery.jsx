@@ -4,8 +4,8 @@ import {memo} from "react";
 
 import ImageGalleryItem from "./ImageGalleryItem";
 
-const ImageGallery = ({ items, onClick }) => {
-  const elem = items.map((item) => (
+const ImageGallery = ({ images, onClick }) => {
+  const elem = images.map((item) => (
     <ImageGalleryItem
       onClick={() => onClick(item.id)}
       key={item.id}
@@ -16,7 +16,7 @@ const ImageGallery = ({ items, onClick }) => {
 };
 
 ImageGallery.propTypes = {
-  items: PropTypes.arrayOf(
+  images: PropTypes.arrayOf(
     PropTypes.shape({
       webformatURL: PropTypes.string.isRequired,
       tags: PropTypes.string.isRequired,

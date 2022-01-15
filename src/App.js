@@ -12,8 +12,8 @@ import ImageGallery from './components/ImageGallery';
 
 
 function App() {
+  const [images, setImages] = useState([]);
   const [largeImageURL, setLargeImage] = useState('');
-  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
@@ -21,21 +21,23 @@ function App() {
   const [modalOpen, setModal] = useState(false);
 
   useEffect(() => {
-    const fetchQuery = async () => {
+    if (!query) return;
+    const onSearch = async () => {
       setLoading(true);
       try {
-        const data = await ApiService.searchQuery(page, query);
-        console.log(data);
+        const data = await ApiService.fetchImages({ query, page });
+
+        if (!data.hits.length) {
+          throw new Error("Sorry we can't find anything");
+
+        }
         if (data?.hits.length > 11) {
-          setItems(prevItem => [...prevItem, ...data.hits])
+          setImages(prevImages => [...prevImages, ...data.hits]);
           setLoading(false);
         }
-        if (!data.hits.length) {
-          return alert('Sorry, there are no images matching your search query. Please try again.');
-        }
       } catch (error) {
-        setLoading(false);
-        setError(true);
+        setError(error.message);
+        console.log(error);
       } finally {
         window.scrollTo({
           top: document.documentElement.scrollHeight,
@@ -44,12 +46,12 @@ function App() {
         setLoading(false);
       }
     };
-    fetchQuery();
+    onSearch();
   }, [query, page]);
 
   const searchQuery = (item) => {
     setQuery(item);
-    setItems([]);
+    setImages([]);
     setPage(1);
     console.log(item);
   }
@@ -68,11 +70,11 @@ function App() {
     setPage((prevPage) => prevPage + 1);
   };
 
-  const showBtn = items.length >= 12 && !loading;
+  const showBtn = images.length >= 12 && !loading;
   return (
     <>
       <Searchbar onSubmit={searchQuery} />
-      {!error && <ImageGallery onClick={openModal} items={items} />}
+      {!error && <ImageGallery onClick={openModal} images={images} />}
       {showBtn && <Button onLoadMore={loadMore} title="Load More" />}
       {loading && <div className={styles.loader}>
         <Loader
