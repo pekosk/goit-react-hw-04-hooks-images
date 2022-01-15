@@ -53,13 +53,14 @@ function App() {
     setQuery(item);
     setImages([]);
     setPage(1);
-    console.log(item);
   }
 
   const openModal = (url) => {
     setLargeImage(url);
     setModal(true);
-  }
+    console.log(url);
+  };
+
 
   const closeModal = () => {
     setModal(false);

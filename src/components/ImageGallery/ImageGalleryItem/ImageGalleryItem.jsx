@@ -2,13 +2,16 @@ import styles from "./ImageGalleryItem.module.css";
 import PropTypes from "prop-types";
 import {memo} from "react";
 
-const ImageGalleryItem = ({ onClick, tags, webformatURL }) => {
-  return (
-    <li className={styles.galleryItem} onClick={onClick}>
-      <img className={styles.galleryImg} src={webformatURL} alt={tags} />
-    </li>
-  );
-};
+const ImageGalleryItem = ({ image, onClick }) => (
+  <li className={styles.galleryItem}>
+    <img
+      src={image.webformatURL}
+      alt={image.tags}
+      className={styles.galleryImg}
+      onClick={onClick}
+    />
+  </li>
+);
 
 ImageGalleryItem.propTypes = {
   onClick: PropTypes.func.isRequired,

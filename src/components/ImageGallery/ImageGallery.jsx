@@ -4,16 +4,16 @@ import {memo} from "react";
 
 import ImageGalleryItem from "./ImageGalleryItem";
 
-const ImageGallery = ({ images, onClick }) => {
-  const elem = images.map((item) => (
-    <ImageGalleryItem
-      onClick={() => onClick(item.id)}
-      key={item.id}
-      {...item}
-    />
-  ));
-  return <ul className={styles.galleryList}>{elem}</ul>;
-};
+const ImageGallery = ({ images, onClick }) => (
+  <ul className={styles.galleryList}>
+    {images.map((image, idx) => {
+      return (
+        <ImageGalleryItem key={image.id + idx} image={image} onClick={()=>onClick(image.largeImageURL)}
+        />
+      );
+    })}
+  </ul>
+);
 
 ImageGallery.propTypes = {
   images: PropTypes.arrayOf(
