@@ -25,7 +25,7 @@ function App() {
       setLoading(true);
       try {
         const data = await ApiService.searchQuery(page, query);
-        console.log("object", data);
+        console.log(data);
         if (data?.hits.length > 11) {
           setItems(prevItem => [...prevItem, ...data.hits])
           setLoading(false);
