@@ -1,6 +1,6 @@
 import styles from "./ImageGalleryItem.module.css";
 import PropTypes from "prop-types";
-import {memo} from "react";
+import { memo } from "react";
 
 const ImageGalleryItem = ({ image, onClick }) => (
   <li className={styles.galleryItem}>
@@ -8,7 +8,7 @@ const ImageGalleryItem = ({ image, onClick }) => (
       src={image.webformatURL}
       alt={image.tags}
       className={styles.galleryImg}
-      onClick={onClick}
+      onClick={() => onClick(image.largeImageURL)}
     />
   </li>
 );
